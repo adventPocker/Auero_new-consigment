@@ -1,0 +1,317 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Auero Authentication API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Comprehensive collection for Auero Backend Authentication API."
+  },
+  "item": [
+    {
+      "name": "Customer Signup",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/signup/customer/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "signup", "customer" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"string\",\n  \"email\": \"string\",\n  \"password\": \"string\",\n  \"user_type\": \"customer\"\n}"
+        }
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {},
+          "status": "201 Created",
+          "code": 201,
+          "body": "{\n  \"status\": \"success\",\n  \"message\": \"Customer registration successful\",\n  \"user\": {\n    \"id\": \"integer\",\n    \"username\": \"string\",\n    \"email\": \"string\",\n    \"user_type\": \"string\"\n  },\n  \"tokens\": {\n    \"refresh\": \"string\",\n    \"access\": \"string\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Vendor Signup",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "multipart/form-data" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/signup/vendor/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "signup", "vendor" ]
+        },
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "username", "value": "string", "type": "text" },
+            { "key": "email", "value": "string", "type": "text" },
+            { "key": "password", "value": "string", "type": "text" },
+            { "key": "phone_number", "value": "string", "type": "text" },
+            { "key": "vendor_profile[vendor_type]", "value": "string", "type": "text" },
+            { "key": "vendor_profile[company_name]", "value": "string", "type": "text" },
+            { "key": "vendor_profile[contact_person]", "value": "string", "type": "text" },
+            { "key": "vendor_profile[profile_image]", "type": "file" }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {},
+          "status": "201 Created",
+          "code": 201,
+          "body": "{\n  \"status\": \"success\",\n  \"message\": \"Vendor registration successful\",\n  \"user\": {\n    \"id\": \"integer\",\n    \"username\": \"string\",\n    \"email\": \"string\",\n    \"user_type\": \"vendor\",\n    \"vendor_profile\": {\n      \"vendor_type\": \"string\",\n      \"company_name\": \"string\",\n      \"contact_person\": \"string\",\n      \"approved\": \"boolean\"\n    }\n  },\n  \"tokens\": {\n    \"refresh\": \"string\",\n    \"access\": \"string\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Vendor Signup (Alias)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "multipart/form-data" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/vendor-user/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "vendor-user" ]
+        },
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "username", "value": "string", "type": "text" },
+            { "key": "email", "value": "string", "type": "text" },
+            { "key": "password", "value": "string", "type": "text" },
+            { "key": "phone_number", "value": "string", "type": "text" },
+            { "key": "vendor_profile[vendor_type]", "value": "string", "type": "text" },
+            { "key": "vendor_profile[company_name]", "value": "string", "type": "text" },
+            { "key": "vendor_profile[contact_person]", "value": "string", "type": "text" },
+            { "key": "vendor_profile[profile_image]", "type": "file" }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {},
+          "status": "201 Created",
+          "code": 201,
+          "body": "{\n  \"status\": \"success\",\n  \"message\": \"Vendor registration successful\",\n  \"user\": {\n    \"id\": \"integer\",\n    \"username\": \"string\",\n    \"email\": \"string\",\n    \"user_type\": \"vendor\",\n    \"vendor_profile\": {\n      \"vendor_type\": \"string\",\n      \"company_name\": \"string\",\n      \"contact_person\": \"string\",\n      \"approved\": \"boolean\"\n    }\n  },\n  \"tokens\": {\n    \"refresh\": \"string\",\n    \"access\": \"string\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/login/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "login" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"string\",\n  \"password\": \"string\"\n}"
+        }
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "body": "{\n  \"user\": {\n    \"id\": \"integer\",\n    \"username\": \"string\",\n    \"email\": \"string\",\n    \"user_type\": \"string\"\n  },\n  \"tokens\": {\n    \"access\": \"string\",\n    \"refresh\": \"string\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/refresh-token/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "refresh-token" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refresh\": \"string\"\n}"
+        }
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "body": "{\n  \"access\": \"string\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/logout/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "logout" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refresh_token\": \"string\"\n}"
+        }
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "body": "{\n  \"status\": \"success\",\n  \"message\": \"Successfully logged out\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Current User Info",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/me/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "me" ]
+        }
+      },
+      "response": [
+        {
+          "name": "Success (Customer)",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "body": "{\n  \"status\": \"success\",\n  \"user\": {\n    \"id\": \"integer\",\n    \"username\": \"string\",\n    \"email\": \"string\",\n    \"user_type\": \"customer\"\n  }\n}"
+        },
+        {
+          "name": "Success (Vendor)",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "body": "{\n  \"status\": \"success\",\n  \"user\": {\n    \"id\": \"integer\",\n    \"username\": \"string\",\n    \"email\": \"string\",\n    \"user_type\": \"vendor\",\n    \"vendor_profile\": {\n      \"vendor_type\": \"string\",\n      \"company_name\": \"string\",\n      \"contact_person\": \"string\",\n      \"approved\": \"boolean\",\n      \"profile_image\": \"string (URL)\"\n    }\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Address List/Create",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/addresses/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "addresses" ]
+        }
+      },
+      "response": [
+        {
+          "name": "Success (List)",
+          "originalRequest": {},
+          "status": "200 OK",
+          "code": 200,
+          "body": "[\n  {\n    \"address_line1\": \"string\",\n    \"address_line2\": \"string\",\n    \"city\": \"string\",\n    \"state\": \"string\",\n    \"postal_code\": \"string\",\n    \"country\": \"string\"\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Address Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/addresses/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "addresses" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"address_line1\": \"string\",\n  \"address_line2\": \"string\",\n  \"city\": \"string\",\n  \"state\": \"string\",\n  \"postal_code\": \"string\",\n  \"country\": \"string\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Address Retrieve/Update/Delete",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/addresses/:id/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "addresses", ":id" ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Address Update",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/addresses/:id/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "addresses", ":id" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"address_line1\": \"string\",\n  \"address_line2\": \"string\",\n  \"city\": \"string\",\n  \"state\": \"string\",\n  \"postal_code\": \"string\",\n  \"country\": \"string\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Address Delete",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/addresses/:id/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "auth", "addresses", ":id" ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "access_token", "value": "" }
+  ]
+} 

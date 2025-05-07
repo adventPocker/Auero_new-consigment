@@ -1,0 +1,204 @@
+{
+  "info": {
+    "_postman_id": "cart-collection-uuid-1234",
+    "name": "Auero Cart API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for Auero Backend Cart API (user and guest)."
+  },
+  "item": [
+    {
+      "name": "Get User Cart",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/cart/user/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "cart", "user" ]
+        }
+      }
+    },
+    {
+      "name": "Add Item to User Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/cart/user/add/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "cart", "user", "add" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"product_id\": 5,\n  \"quantity\": 2\n}"
+        }
+      }
+    },
+    {
+      "name": "Remove Item from User Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/cart/user/remove/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "cart", "user", "remove" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"product_id\": 5\n}"
+        }
+      }
+    },
+    {
+      "name": "Update Item Quantity in User Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/cart/user/update/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "cart", "user", "update" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"product_id\": 5,\n  \"quantity\": 3\n}"
+        }
+      }
+    },
+    {
+      "name": "Clear User Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/cart/user/clear/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "cart", "user", "clear" ]
+        }
+      }
+    },
+    {
+      "name": "Get Guest Cart",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/cart/guest/?session_key=abc123",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "cart", "guest" ],
+          "query": [
+            { "key": "session_key", "value": "abc123" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Add Item to Guest Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/cart/guest/add/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "cart", "guest", "add" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"session_key\": \"abc123\",\n  \"product_id\": 5,\n  \"quantity\": 2\n}"
+        }
+      }
+    },
+    {
+      "name": "Remove Item from Guest Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/cart/guest/remove/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "cart", "guest", "remove" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"session_key\": \"abc123\",\n  \"product_id\": 5\n}"
+        }
+      }
+    },
+    {
+      "name": "Update Item Quantity in Guest Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/cart/guest/update/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "cart", "guest", "update" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"session_key\": \"abc123\",\n  \"product_id\": 5,\n  \"quantity\": 3\n}"
+        }
+      }
+    },
+    {
+      "name": "Clear Guest Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/cart/guest/clear/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "cart", "guest", "clear" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"session_key\": \"abc123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Merge Guest Cart into User Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/cart/merge/",
+          "host": [ "{{base_url}}" ],
+          "path": [ "api", "cart", "merge" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"session_key\": \"abc123\"\n}"
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "access_token", "value": "" }
+  ]
+} 

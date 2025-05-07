@@ -1,0 +1,10 @@
+this is an e-commerce platform built on Django backend and Next.js frontend
+- There are 3 types of users: vendor, admin, and normal users (customers)
+- Each user type has different pages and permissions
+- Normal users can browse and purchase products like a typical e-commerce website
+- Vendors can add products (mainly ornaments like gold and jewelry) to the platform. Products are submitted as consignments.
+- When a vendor adds a product, the admin reviews it for correct pricing, description, images, etc. The admin must approve the product before it is listed for sale.
+- Products are sold by the admin on behalf of the vendor. After a sale, the platform fee percentage is determined by the admin, and the vendor receives the remaining payout. The payout status is tracked (pending/paid).
+- Consignment workflow: Vendor submits product → Admin inspects and approves → Product is listed for sale → Product is sold → Fee sharing and payout are processed.
+- (Planned) Vendors will require a subscription to sell products (not yet implemented).
+- 

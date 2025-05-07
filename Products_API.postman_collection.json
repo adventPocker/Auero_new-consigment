@@ -1,0 +1,296 @@
+{
+  "info": {
+    "name": "Products API",
+    "description": "Postman collection for all endpoints in the products app, including search, CRUD, and consignment management.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Categories",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/products/categories/", "host": ["{{base_url}}"], "path": ["api", "products", "categories"] }
+      }
+    },
+    {
+      "name": "Create Category",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Gold Rings\",\n  \"name_ar\": \"خواتم ذهب\",\n  \"description\": \"Gold ring category\",\n  \"description_ar\": \"فئة خواتم الذهب\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/products/categories/", "host": ["{{base_url}}"], "path": ["api", "products", "categories"] }
+      }
+    },
+    {
+      "name": "Get Category Detail",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/products/categories/1/", "host": ["{{base_url}}"], "path": ["api", "products", "categories", "1"] }
+      }
+    },
+    {
+      "name": "Update Category",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Category\",\n  \"name_ar\": \"فئة محدثة\",\n  \"description\": \"Updated description\",\n  \"description_ar\": \"وصف محدث\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/products/categories/1/", "host": ["{{base_url}}"], "path": ["api", "products", "categories", "1"] }
+      }
+    },
+    {
+      "name": "Delete Category",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/products/categories/1/", "host": ["{{base_url}}"], "path": ["api", "products", "categories", "1"] }
+      }
+    },
+    {
+      "name": "List Products in Category",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/products/categories/1/products/", "host": ["{{base_url}}"], "path": ["api", "products", "categories", "1", "products"] }
+      }
+    },
+    {
+      "name": "List Products",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/api/products/products/", "host": ["{{base_url}}"], "path": ["api", "products", "products"] }
+      }
+    },
+    {
+      "name": "Create Product",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"category\": 1,\n  \"name\": \"18K Gold Ring\",\n  \"name_ar\": \"خاتم ذهب 18 قيراط\",\n  \"description\": \"A beautiful 18K gold ring.\",\n  \"description_ar\": \"خاتم جميل من الذهب عيار 18.\",\n  \"vendor_price\": \"1000.00\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/products/products/", "host": ["{{base_url}}"], "path": ["api", "products", "products"] }
+      }
+    },
+    {
+      "name": "Get Product Detail",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/api/products/products/1/", "host": ["{{base_url}}"], "path": ["api", "products", "products", "1"] }
+      }
+    },
+    {
+      "name": "Update Product",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"category\": 1,\n  \"name\": \"Updated Product\",\n  \"name_ar\": \"منتج محدث\",\n  \"description\": \"Updated description\",\n  \"description_ar\": \"وصف محدث\",\n  \"vendor_price\": \"1200.00\",\n  \"selling_price\": \"1500.00\",\n  \"status\": \"APPROVED\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/products/products/1/", "host": ["{{base_url}}"], "path": ["api", "products", "products", "1"] }
+      }
+    },
+    {
+      "name": "Update Product Status to SOLD",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"SOLD\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/products/products/1/", "host": ["{{base_url}}"], "path": ["api", "products", "products", "1"] }
+      }
+    },
+    {
+      "name": "Delete Product",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/api/products/products/1/", "host": ["{{base_url}}"], "path": ["api", "products", "products", "1"] }
+      }
+    },
+    {
+      "name": "Upload Product Images",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "images", "type": "file", "src": "/path/to/image.jpg" },
+            { "key": "is_primary", "value": "true", "type": "text" }
+          ]
+        },
+        "url": { "raw": "{{base_url}}/api/products/products/1/images/", "host": ["{{base_url}}"], "path": ["api", "products", "products", "1", "images"] }
+      }
+    },
+    {
+      "name": "List Consignments",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/api/products/consignments/", "host": ["{{base_url}}"], "path": ["api", "products", "consignments"] }
+      }
+    },
+    {
+      "name": "Create Consignment",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"product\": 1,\n  \"handover_date\": \"2024-06-01T13:00:00Z\",\n  \"physical_status\": \"DELIVERED\",\n  \"quality_notes\": \"Excellent condition.\",\n  \"authentication_notes\": \"Genuine gold.\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/products/consignments/", "host": ["{{base_url}}"], "path": ["api", "products", "consignments"] }
+      }
+    },
+    {
+      "name": "Get Consignment Detail",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/api/products/consignments/1/", "host": ["{{base_url}}"], "path": ["api", "products", "consignments", "1"] }
+      }
+    },
+    {
+      "name": "Update Consignment",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"handover_date\": \"2024-06-01T13:00:00Z\",\n  \"inspection_date\": \"2024-06-01T14:00:00Z\",\n  \"physical_status\": \"INSPECTED\",\n  \"quality_notes\": \"Checked and approved.\",\n  \"authentication_notes\": \"Verified.\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/products/consignments/1/", "host": ["{{base_url}}"], "path": ["api", "products", "consignments", "1"] }
+      }
+    },
+    {
+      "name": "Delete Consignment",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/api/products/consignments/1/", "host": ["{{base_url}}"], "path": ["api", "products", "consignments", "1"] }
+      }
+    },
+    {
+      "name": "Update Consignment Status",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"physical_status\": \"SOLD\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/products/consignments/1/status/", "host": ["{{base_url}}"], "path": ["api", "products", "consignments", "1", "status"] }
+      }
+    },
+    {
+      "name": "Product Search",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/products/search/?q=gold&category=1&min_price=1000&max_price=5000&status=APPROVED&ordering=-selling_price&page=1&page_size=10",
+          "host": ["{{base_url}}"],
+          "path": ["api", "products", "search"],
+          "query": [
+            { "key": "q", "value": "gold" },
+            { "key": "category", "value": "1" },
+            { "key": "min_price", "value": "1000" },
+            { "key": "max_price", "value": "5000" },
+            { "key": "status", "value": "APPROVED" },
+            { "key": "ordering", "value": "-selling_price" },
+            { "key": "page", "value": "1" },
+            { "key": "page_size", "value": "10" }
+          ]
+        }
+      }
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "YOUR_JWT_TOKEN_HERE",
+      "type": "string"
+    }
+  ]
+} 
