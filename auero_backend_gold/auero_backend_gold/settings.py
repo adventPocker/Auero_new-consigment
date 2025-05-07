@@ -41,6 +41,7 @@ CORS_ALLOW_ORIGINS = [
     "http://127.0.0.1:5173",
     'http://159.89.200.152',
     'https://api1.aureosolutions.tech'
+    'http://139.59.42.184'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -48,13 +49,15 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
-    'https://api1.aureosolutions.tech'
+    'https://api1.aureosolutions.tech',
+    'http://139.59.42.184'
 ]
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    'api1.aureosolutions.tech'
+    'api1.aureosolutions.tech',
+    '139.59.42.184'
 ]
 
 
