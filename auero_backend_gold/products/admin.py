@@ -1,111 +1,52 @@
 from django.contrib import admin
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
 from .models import Category, Product, ProductImage, ConsignmentDetails
+from authentication.models import CustomUser
 
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
-    readonly_fields = ['created_at']
+    fields = ('image', 'is_primary', 'created_at')
+    readonly_fields = ('created_at',)
 
 class ConsignmentDetailsInline(admin.StackedInline):
     model = ConsignmentDetails
-    can_delete = False
-    readonly_fields = ['created_at', 'updated_at']
     extra = 0
-    max_num = 1
+    can_delete = False
+    fields = ('handover_date', 'inspection_date', 'physical_status', 'inspector', 'quality_notes', 'authentication_notes', 'created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at')
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'name_ar', 'slug', 'is_active', 'created_at']
-    list_filter = ['is_active', 'created_at']
-    search_fields = ['name', 'name_ar', 'description']
-    readonly_fields = ['slug', 'created_at', 'updated_at']
-    fieldsets = (
-        ('Basic Information', {
-            'fields': ('name', 'name_ar', 'slug', 'is_active')
-        }),
-        ('Description', {
-            'fields': ('description', 'description_ar')
-        }),
-        ('Images', {
-            'fields': ('image', 'banner_image')
-        }),
-        ('Metadata', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-
-@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'vendor', 'category', 'vendor_price', 'selling_price', 'status', 'created_at']
-    list_filter = ['status', 'category', 'created_at', 'payout_status']
-    search_fields = ['name', 'name_ar', 'description', 'vendor__username', 'vendor__email']
-    readonly_fields = ['slug', 'created_at', 'updated_at']
+    list_display = ('name', 'vendor', 'category', 'status', 'vendor_price', 'selling_price', 'platform_fee', 'vendor_payout', 'payout_status', 'created_at')
+    list_filter = ('status', 'category', 'vendor', 'payout_status')
+    search_fields = ('name', 'vendor__username', 'category__name')
     inlines = [ProductImageInline, ConsignmentDetailsInline]
     fieldsets = (
-        ('Basic Information', {
-            'fields': ('name', 'name_ar', 'slug', 'vendor', 'category', 'status')
-        }),
-        ('Description', {
-            'fields': ('description', 'description_ar')
-        }),
-        ('Pricing', {
-            'fields': ('vendor_price', 'selling_price', 'platform_fee', 'vendor_payout', 'payout_status')
-        }),
-        ('Inspection', {
-            'fields': ('inspection_notes',)
-        }),
-        ('Metadata', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
+        (None, {'fields': ('name', 'name_ar', 'slug', 'vendor', 'category', 'description', 'description_ar')}),
+        ('Pricing', {'fields': ('vendor_price', 'selling_price', 'platform_fee', 'vendor_payout', 'payout_status')}),
+        ('Status', {'fields': ('status', 'inspection_notes')}),
+        ('Timestamps', {'fields': ('created_at', 'updated_at')}),
     )
-
-    def get_inline_instances(self, request, obj=None):
-        if not obj:
-            return []
-        return super().get_inline_instances(request, obj)
-
-    def save_model(self, request, obj, form, change):
-        if not change:  # Only for new products
-            if not hasattr(obj, 'consignment'):
-                # Create empty consignment details for new products
-                ConsignmentDetails.objects.create(product=obj)
-        super().save_model(request, obj, form, change)
+    readonly_fields = ('slug', 'created_at', 'updated_at')
+    autocomplete_fields = ['vendor', 'category']
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('vendor', 'category', 'consignment')
+        qs = super().get_queryset(request)
+        # If the user is a vendor, only show their products
+        if request.user.is_superuser or request.user.is_staff:
+            return qs
+        return qs.filter(vendor=request.user)
 
-@admin.register(ProductImage)
-class ProductImageAdmin(admin.ModelAdmin):
-    list_display = ['product', 'is_primary', 'created_at']
-    list_filter = ['is_primary', 'created_at']
-    search_fields = ['product__name']
-    readonly_fields = ['created_at']
+    def save_model(self, request, obj, form, change):
+        # Automatically set vendor to current user if not set and user is not staff
+        if not obj.vendor_id and not request.user.is_staff and not request.user.is_superuser:
+            obj.vendor = request.user
+        super().save_model(request, obj, form, change)
 
-@admin.register(ConsignmentDetails)
-class ConsignmentDetailsAdmin(admin.ModelAdmin):
-    list_display = ['product', 'physical_status', 'handover_date', 'inspection_date', 'inspector']
-    list_filter = ['physical_status', 'handover_date', 'inspection_date']
-    search_fields = ['product__name', 'quality_notes', 'authentication_notes']
-    readonly_fields = ['created_at', 'updated_at']
-    fieldsets = (
-        ('Product Information', {
-            'fields': ('product',)
-        }),
-        ('Status', {
-            'fields': ('physical_status',)
-        }),
-        ('Dates', {
-            'fields': ('handover_date', 'inspection_date')
-        }),
-        ('Inspection Details', {
-            'fields': ('inspector', 'quality_notes', 'authentication_notes')
-        }),
-        ('Metadata', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'name_ar', 'is_active', 'parent', 'created_at')
+    search_fields = ('name', 'name_ar')
+    list_filter = ('is_active', 'parent')
+    readonly_fields = ('slug', 'created_at', 'updated_at')
+
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(Product, ProductAdmin)
