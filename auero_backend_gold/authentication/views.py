@@ -7,6 +7,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.validators import ValidationError
 from rest_framework.views import APIView
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
 
 
 from .serializers import (
@@ -252,34 +255,96 @@ class LogoutView(APIView):
 
 class CurrentUserView(APIView):
     """
-    View to retrieve current authenticated user's information
+    View to retrieve and update current authenticated user's information
     """
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
         try:
             user = request.user
-            # Use UserSerializer for consistent response format
             serializer = UserSerializer(user)
-            
-            # Add vendor profile data if user is a vendor
             response_data = serializer.data
             if user.user_type == 'vendor' and hasattr(user, 'vendor_profile'):
                 response_data['vendor_profile'] = {
                     'vendor_type': user.vendor_profile.vendor_type,
                     'company_name': user.vendor_profile.company_name,
-                    'contact_person': user.vendor_profile.contact_person,
+                    'contact_person': getattr(user.vendor_profile, 'contact_person', None),
                     'approved': user.vendor_profile.approved,
                     'profile_image': request.build_absolute_uri(user.vendor_profile.profile_image.url) if user.vendor_profile.profile_image else None
                 }
-            
             return Response({
                 'status': 'success',
                 'user': response_data
             }, status=status.HTTP_200_OK)
-            
         except Exception as e:
             return Response({
                 'status': 'error',
                 'message': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def patch(self, request):
+        try:
+            user = request.user
+            serializer = UserSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    'status': 'success',
+                    'user': serializer.data
+                }, status=status.HTTP_200_OK)
+            return Response({
+                'status': 'error',
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PasswordChangeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+        if not user.check_password(old_password):
+            return Response({'status': 'error', 'message': 'Old password is incorrect.'}, status=400)
+        user.set_password(new_password)
+        user.save()
+        return Response({'status': 'success', 'message': 'Password changed successfully.'})
+
+class PasswordResetRequestView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email')
+        from .models import CustomUser
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({'status': 'error', 'message': 'User with this email does not exist.'}, status=404)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        # Mock email sending: return token and uid in response
+        return Response({'status': 'success', 'uid': uid, 'token': token, 'message': 'Password reset link (mocked) generated.'})
+
+class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        uidb64 = request.data.get('uid')
+        token = request.data.get('token')
+        new_password = request.data.get('new_password')
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            from .models import CustomUser
+            user = CustomUser.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+            return Response({'status': 'error', 'message': 'Invalid link.'}, status=400)
+        if not default_token_generator.check_token(user, token):
+            return Response({'status': 'error', 'message': 'Invalid or expired token.'}, status=400)
+        user.set_password(new_password)
+        user.save()
+        return Response({'status': 'success', 'message': 'Password has been reset successfully.'})

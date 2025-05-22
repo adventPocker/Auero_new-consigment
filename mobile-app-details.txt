@@ -1,0 +1,401 @@
+**Mobile E‑Commerce App (Without Payment Integration)**
+
+This specification outlines the key screens (pages) and backend APIs required to build a mobile e‑commerce application, omitting payment gateway integration. It is suitable for Android and iOS clients.
+
+---
+
+## 1. Screens / Pages
+
+### 1.1 Splash Screen
+
+* **Purpose**: Initial branding and loading.
+* **Components**: App logo, animated loader.
+
+### 1.2 Authentication Flow
+
+1. **Welcome / Landing Page**
+    
+   * Brief intro, "Sign In" and "Sign Up" buttons.
+2. **Sign In Page**
+
+   * Fields: Email/Phone, Password.
+   * Actions: "Forgot Password", "Sign In", "Go to Sign Up".
+3. **Sign Up Page**
+
+   * Fields: Name, Email/Phone, Password, Confirm Password.
+   * Actions: "Sign Up", "Go to Sign In".
+4. **Forgot Password Page**
+
+   * Field: Email/Phone.
+   * Actions: "Send Reset Code".
+5. **Reset Password Page**
+
+   * Fields: Verification Code, New Password, Confirm New Password.
+   * Actions: "Reset Password".
+
+### 1.3 Home / Dashboard
+
+* **Components**:
+
+  * Search bar.
+  * Category carousel or grid.
+  * Banner slider for promotions.
+  * Featured products / deals.
+
+### 1.4 Category Listing
+
+* **Components**:
+
+  * Category filters (e.g., sub‑categories).
+  * List or grid of products.
+
+### 1.5 Product Details
+
+* **Components**:
+
+  * Image carousel.
+  * Product title, brand.
+  * Price (regular, discounted).
+  * Description, specifications.
+  * Quantity selector.
+  * "Add to Cart" button.
+  * Related products carousel.
+
+### 1.6 Cart
+
+* **Components**:
+
+  * List of added items (image, title, price, quantity).
+  * Item-level actions (change quantity, remove).
+  * Summary: Subtotal, estimated shipping/tax.
+  * "Proceed to Checkout" button.
+
+### 1.7 Checkout (Order Placement)
+
+* **Components**:
+
+  * Shipping address selection / entry.
+  * Shipping options.
+  * Order summary.
+  * "Place Order" button (creates order without payment).
+
+### 1.8 Order Confirmation
+
+* **Components**:
+
+  * Order number.
+  * Summary of items, shipping details.
+  * "Continue Shopping" or "View Orders".
+
+### 1.9 Orders History / My Orders
+
+* **Components**:
+
+  * List of past orders (number, date, status).
+  * Tap to view order details (items, status updates).
+
+### 1.10 Profile / Account
+
+* **Components**:
+
+  * User information (name, email, phone).
+  * Editable fields: Name, Email, Phone.
+  * Address book management (add/edit/delete addresses).
+  * Logout button.
+
+### 1.11 Notifications
+
+* **Components**:
+
+  * List of in‑app notifications (order updates, offers).
+
+### 1.12 Settings
+
+* **Components**:
+
+  * Language preferences.
+  * Push notification toggles.
+  * App version, support contact.
+
+---
+
+## 2. Backend API Endpoints
+
+### 2.1 Authentication APIs
+
+* **POST** `/api/auth/register`
+
+  * Request: `{ name, email, phone, password }`
+  * Response: `{ user: {...}, token }`
+
+* **POST** `/api/auth/login`
+
+  * Request: `{ emailOrPhone, password }`
+  * Response: `{ user: {...}, token }`
+
+* **POST** `/api/auth/logout`
+
+  * Header: `Authorization: Bearer <token>`
+  * Response: `{ message }`
+
+* **POST** `/api/auth/forgot-password`
+
+  * Request: `{ emailOrPhone }`
+  * Response: `{ message }`
+
+* **POST** `/api/auth/reset-password`
+
+  * Request: `{ token, newPassword }`
+  * Response: `{ message }`
+
+### 2.2 User Profile APIs
+
+* **GET** `/api/users/me`
+
+  * Header: `Authorization`
+  * Response: `{ user }`
+
+* **PUT** `/api/users/me`
+
+  * Header: `Authorization`
+  * Request: `{ name?, email?, phone? }`
+  * Response: `{ user }`
+
+### 2.3 Address Management APIs
+
+* **GET** `/api/users/me/addresses`
+* **POST** `/api/users/me/addresses`
+* **PUT** `/api/users/me/addresses/{addressId}`
+* **DELETE** `/api/users/me/addresses/{addressId}`
+
+### 2.4 Category & Product APIs
+
+* **GET** `/api/categories`
+
+  * Response: `[{ id, name, imageUrl, parentId? }]`
+
+* **GET** `/api/categories/{id}/products`
+
+  * Query params: `page, limit, sort, filters`
+  * Response: `{ products: [...], pagination }`
+
+* **GET** `/api/products`
+
+  * Query: `search, categoryId, page, limit`
+
+* **GET** `/api/products/{productId}`
+
+  * Response: `{ product }`
+
+### 2.5 Cart APIs
+
+* **GET** `/api/cart`
+
+  * Header: `Authorization`
+  * Response: `{ items: [{ productId, qty, price, ... }], subtotal }`
+
+* **POST** `/api/cart`
+
+  * Request: `{ productId, qty }`
+
+* **PUT** `/api/cart/{itemId}`
+
+  * Request: `{ qty }`
+
+* **DELETE** `/api/cart/{itemId}`
+
+### 2.6 Order APIs
+
+* **POST** `/api/orders`
+
+  * Header: `Authorization`
+  * Request: `{ items: [{ productId, qty }], shippingAddressId, shippingOption }`
+  * Response: `{ orderId, status }`
+
+* **GET** `/api/orders/{orderId}`
+
+* **GET** `/api/users/me/orders`
+
+  * Response: `[{ orderId, date, status, total, ... }]`
+
+* **PUT** `/api/orders/{orderId}/status`
+
+  * (Admin use) update order status.
+
+### 2.7 Notification APIs
+
+* **GET** `/api/users/me/notifications`
+* **PUT** `/api/users/me/notifications/{notifId}`
+
+  * Mark read.
+
+---
+
+## 3. Data Models (Brief)
+
+### 3.1 User
+
+* `id, name, email, phone, passwordHash, createdAt, updatedAt`
+
+### 3.2 Address
+
+* `id, userId, line1, line2, city, state, zipCode, country, isDefault`
+
+### 3.3 Category
+
+* `id, name, imageUrl, parentId`
+
+### 3.4 Product
+
+* `id, name, description, price, discountedPrice, images[], categoryId, stockQty, attributes[]`
+
+### 3.5 CartItem
+
+* `id, userId, productId, qty, unitPrice`
+
+### 3.6 Order
+
+* `id, userId, items[{ productId, qty, unitPrice }], shippingAddressId, shippingOption, status, createdAt`
+
+### 3.7 Notification
+
+* `id, userId, type, title, message, isRead, createdAt`
+
+---
+
+## 4. Backend Deliverables to Frontend (Per Screen)
+
+Breakdown of required API endpoints, sample payloads, and docs that backend must supply for each client page:
+
+### 4.1 Splash Screen
+
+* **APIs**: None (static assets).
+* **Deliverables**: URL or CDN paths for logo and loader animations.
+
+### 4.2 Authentication Flow
+
+* **APIs**:
+
+  * `POST /api/auth/register`
+  * `POST /api/auth/login`
+  * `POST /api/auth/forgot-password`
+  * `POST /api/auth/reset-password`
+* **Deliverables**:
+
+  * Request/response JSON schemas for each endpoint.
+  * Token format, header examples.
+  * Error codes (e.g., 400 validation, 401 unauthorized).
+
+### 4.3 Home / Dashboard
+
+* **APIs**:
+
+  * `GET /api/categories`
+  * `GET /api/products?featured=true&page=&limit=`
+  * `GET /api/products?search=&page=&limit=` (for search bar)
+* **Deliverables**:
+
+  * Category list and featured products payloads.
+  * Pagination meta and filter parameters.
+
+### 4.4 Category Listing
+
+* **APIs**:
+
+  * `GET /api/categories/{id}/products?page=&limit=&sort=&filters=`
+* **Deliverables**:
+
+  * Full JSON response example with product array and pagination.
+
+### 4.5 Product Details
+
+* **APIs**:
+
+  * `GET /api/products/{productId}`
+* **Deliverables**:
+
+  * Detailed product schema including images\[], attributes, stockQty.
+
+### 4.6 Cart
+
+* **APIs**:
+
+  * `GET /api/cart`
+  * `POST /api/cart`  (body: `{ productId, qty }`)
+  * `PUT /api/cart/{itemId}`  (body: `{ qty }`)
+  * `DELETE /api/cart/{itemId}`
+* **Deliverables**:
+
+  * Cart item list schema and subtotal calculation example.
+
+### 4.7 Checkout (Order Placement)
+
+* **APIs**:
+
+  * `POST /api/orders`  (body: `{ items, shippingAddressId, shippingOption }`)
+* **Deliverables**:
+
+  * Order creation request example.
+  * Response schema with `orderId` and `status`.
+
+### 4.8 Order Confirmation
+
+* **APIs**:
+
+  * `GET /api/orders/{orderId}`
+* **Deliverables**:
+
+  * Order detail response example (items, shipping, totals).
+
+### 4.9 Orders History / My Orders
+
+* **APIs**:
+
+  * `GET /api/users/me/orders`
+* **Deliverables**:
+
+  * List of orders schema, with date, status, total.
+
+### 4.10 Profile / Account
+
+* **APIs**:
+
+  * `GET /api/users/me`
+  * `PUT /api/users/me`
+  * Address management:
+
+    * `GET /api/users/me/addresses`
+    * `POST /api/users/me/addresses`
+    * `PUT /api/users/me/addresses/{addressId}`
+    * `DELETE /api/users/me/addresses/{addressId}`
+* **Deliverables**:
+
+  * User profile and address payload examples.
+
+### 4.11 Notifications
+
+* **APIs**:
+
+  * `GET /api/users/me/notifications`
+  * `PUT /api/users/me/notifications/{notifId}` (mark read)
+* **Deliverables**:
+
+  * Notification list schema, event types.
+
+### 4.12 Settings
+
+* **APIs** (optional):
+
+  * `PUT /api/users/me/settings` (body: `{ language, pushEnabled }`)
+* **Deliverables**:
+
+  * Settings update payloads.
+
+---
+
+**General Deliverables** (for all screens):
+
+* OpenAPI/Swagger specification covering above endpoints.
+* Sample request/response payloads (success & errors).
+* Auth token flow and error handling docs.
+* Change log of API updates.

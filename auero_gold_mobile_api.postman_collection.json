@@ -1,0 +1,773 @@
+{
+	"info": {
+		"_postman_id": "'''+str(uuid.uuid4())+'''",
+		"name": "Auero Gold Mobile API",
+		"description": "Postman collection for the Auero Gold Mobile App Backend API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Customer Registration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"customer_username\",\n    \"email\": \"customer@example.com\",\n    \"password\": \"securepassword123\",\n    \"user_type\": \"customer\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/signup/customer/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "signup", "customer", ""]
+						},
+						"description": "Registers a new customer account."
+					},
+					"response": []
+				},
+				{
+					"name": "User Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"userpassword\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login", ""]
+						},
+						"description": "Logs in an existing user and returns access/refresh tokens."
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Access Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"your_refresh_token\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/refresh-token/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "refresh-token", ""]
+						},
+						"description": "Obtains a new access token using a valid refresh token."
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh_token\": \"your_refresh_token\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/logout/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "logout", ""]
+						},
+						"description": "Blacklists the provided refresh token to log the user out."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{access_token}}"}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/me/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "me", ""]
+						},
+						"description": "Retrieves the profile information of the currently authenticated user."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Current User Details",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{access_token}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"newusername\",\n    \"email\": \"newemail@example.com\",\n    \"phone_number\": \"0987654321\",\n    \"profile_image\": null\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/me/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "me", ""]
+						},
+						"description": "Updates the profile information of the currently authenticated user. For profile_image, use multipart/form-data if sending a file."
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{access_token}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"old_password\": \"current_password\",\n    \"new_password\": \"brand_new_strong_password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/password/change/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "password", "change", ""]
+						},
+						"description": "Allows an authenticated user to change their password."
+					},
+					"response": []
+				},
+				{
+					"name": "Request Password Reset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user_email@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/password/reset/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "password", "reset", ""]
+						},
+						"description": "Initiates the password reset process for a user."
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm Password Reset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uidb64\": \"base64_encoded_user_id\",\n    \"token\": \"password_reset_token\",\n    \"new_password\": \"new_secure_password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/password/reset/confirm/",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "password", "reset", "confirm", ""]
+						},
+						"description": "Sets a new password using the token received from the password reset request."
+					},
+					"response": []
+				},
+				{
+					"name": "Address Management",
+					"item": [
+						{
+							"name": "List Addresses",
+							"request": {
+								"method": "GET",
+								"header": [
+									{"key": "Authorization", "value": "Bearer {{access_token}}"}
+								],
+								"url": {
+									"raw": "{{base_url}}/auth/addresses/",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "addresses", ""]
+								},
+								"description": "Retrieves a list of addresses for the authenticated user."
+							},
+							"response": []
+						},
+						{
+							"name": "Create Address",
+							"request": {
+								"method": "POST",
+								"header": [
+									{"key": "Content-Type", "value": "application/json"},
+									{"key": "Authorization", "value": "Bearer {{access_token}}"}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"address_line1\": \"456 Oak Ave\",\n    \"address_line2\": \"\",\n    \"city\": \"Otherville\",\n    \"state\": \"NY\",\n    \"postal_code\": \"10001\",\n    \"country\": \"USA\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/addresses/",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "addresses", ""]
+								},
+								"description": "Adds a new address for the authenticated user."
+							},
+							"response": []
+						},
+						{
+							"name": "Retrieve Address",
+							"request": {
+								"method": "GET",
+								"header": [
+									{"key": "Authorization", "value": "Bearer {{access_token}}"}
+								],
+								"url": {
+									"raw": "{{base_url}}/auth/addresses/:pk/",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "addresses", ":pk", ""],
+									"variable": [
+										{"key": "pk", "value": "1", "description": "Address ID"}
+									]
+								},
+								"description": "Retrieves a specific address."
+							},
+							"response": []
+						},
+						{
+							"name": "Update Address (PUT)",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{"key": "Content-Type", "value": "application/json"},
+									{"key": "Authorization", "value": "Bearer {{access_token}}"}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"address_line1\": \"789 Pine Ln\",\n    \"address_line2\": \"Suite C\",\n    \"city\": \"New City\",\n    \"state\": \"TX\",\n    \"postal_code\": \"75001\",\n    \"country\": \"USA\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/addresses/:pk/",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "addresses", ":pk", ""],
+									"variable": [
+										{"key": "pk", "value": "1", "description": "Address ID"}
+									]
+								},
+								"description": "Updates a specific address (all fields required)."
+							},
+							"response": []
+						},
+						{
+							"name": "Update Address (PATCH)",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{"key": "Content-Type", "value": "application/json"},
+									{"key": "Authorization", "value": "Bearer {{access_token}}"}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"address_line1\": \"789 Pine Ln Updated\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/addresses/:pk/",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "addresses", ":pk", ""],
+									"variable": [
+										{"key": "pk", "value": "1", "description": "Address ID"}
+									]
+								},
+								"description": "Partially updates a specific address."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Address",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{"key": "Authorization", "value": "Bearer {{access_token}}"}
+								],
+								"url": {
+									"raw": "{{base_url}}/auth/addresses/:pk/",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "addresses", ":pk", ""],
+									"variable": [
+										{"key": "pk", "value": "1", "description": "Address ID"}
+									]
+								},
+								"description": "Deletes a specific address."
+							},
+							"response": []
+						}
+					],
+					"description": "Endpoints for managing user addresses."
+				}
+			],
+			"description": "User authentication and profile management."
+		},
+		{
+			"name": "Products & Categories",
+			"item": [
+				{
+					"name": "List Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/categories/",
+							"host": ["{{base_url}}"],
+							"path": ["products", "categories", ""]
+						},
+						"description": "Retrieves a list of all product categories."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/categories/:pk/",
+							"host": ["{{base_url}}"],
+							"path": ["products", "categories", ":pk", ""],
+							"variable": [
+								{"key": "pk", "value": "1", "description": "Category ID"}
+							]
+						},
+						"description": "Retrieves details of a specific category."
+					},
+					"response": []
+				},
+				{
+					"name": "List Products in a Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/categories/:pk/products/?page=1&page_size=10",
+							"host": ["{{base_url}}"],
+							"path": ["products", "categories", ":pk", "products", ""],
+							"variable": [
+								{"key": "pk", "value": "1", "description": "Category ID"}
+							],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "10"}
+							]
+						},
+						"description": "Retrieves a list of products belonging to a specific category. Supports pagination."
+					},
+					"response": []
+				},
+				{
+					"name": "List All Products (General Listing)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/products/?page=1&page_size=10&status=APPROVED",
+							"host": ["{{base_url}}"],
+							"path": ["products", "products", ""],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "10"},
+								{"key": "status", "value": "APPROVED", "description": "Filter by product status (e.g., APPROVED)"}
+							]
+						},
+						"description": "Retrieves a list of all products. For customer view, should ideally only show 'APPROVED' products. Supports pagination and filtering."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/products/:pk/",
+							"host": ["{{base_url}}"],
+							"path": ["products", "products", ":pk", ""],
+							"variable": [
+								{"key": "pk", "value": "101", "description": "Product ID"}
+							]
+						},
+						"description": "Retrieves details of a specific product."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/search/?query=smartphone&category=Electronics&min_price=500&max_price=1000&status=APPROVED&ordering=-created_at&page=1&page_size=10",
+							"host": ["{{base_url}}"],
+							"path": ["products", "search", ""],
+							"query": [
+								{"key": "query", "value": "smartphone", "description": "Search term"},
+								{"key": "category", "value": "Electronics", "description": "Category name or ID"},
+								{"key": "min_price", "value": "500", "description": "Minimum price"},
+								{"key": "max_price", "value": "1000", "description": "Maximum price"},
+								{"key": "status", "value": "APPROVED", "description": "Product status"},
+								{"key": "ordering", "value": "-created_at", "description": "Sort order"},
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "10"}
+							]
+						},
+						"description": "Provides a dedicated endpoint for searching products based on various criteria."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for browsing products and categories."
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "User Cart",
+					"item": [
+						{
+							"name": "Get User Cart",
+							"request": {
+								"method": "GET",
+								"header": [
+									{"key": "Authorization", "value": "Bearer {{access_token}}"}
+								],
+								"url": {
+									"raw": "{{base_url}}/cart/user/",
+									"host": ["{{base_url}}"],
+									"path": ["cart", "user", ""]
+								},
+								"description": "Retrieves the cart for the authenticated user."
+							},
+							"response": []
+						},
+						{
+							"name": "Add Item to User Cart",
+							"request": {
+								"method": "POST",
+								"header": [
+									{"key": "Content-Type", "value": "application/json"},
+									{"key": "Authorization", "value": "Bearer {{access_token}}"}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"product_id\": 101,\n    \"quantity\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/cart/user/add/",
+									"host": ["{{base_url}}"],
+									"path": ["cart", "user", "add", ""]
+								},
+								"description": "Adds a product to the authenticated user's cart or updates quantity if already present."
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Item from User Cart",
+							"request": {
+								"method": "POST",
+								"header": [
+									{"key": "Content-Type", "value": "application/json"},
+									{"key": "Authorization", "value": "Bearer {{access_token}}"}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"product_id\": 101\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/cart/user/remove/",
+									"host": ["{{base_url}}"],
+									"path": ["cart", "user", "remove", ""]
+								},
+								"description": "Removes a product entirely from the authenticated user's cart."
+							},
+							"response": []
+						},
+						{
+							"name": "Update Item Quantity in User Cart",
+							"request": {
+								"method": "POST",
+								"header": [
+									{"key": "Content-Type", "value": "application/json"},
+									{"key": "Authorization", "value": "Bearer {{access_token}}"}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"product_id\": 101,\n    \"quantity\": 3\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/cart/user/update/",
+									"host": ["{{base_url}}"],
+									"path": ["cart", "user", "update", ""]
+								},
+								"description": "Updates the quantity of a specific product in the authenticated user's cart."
+							},
+							"response": []
+						},
+						{
+							"name": "Clear User Cart",
+							"request": {
+								"method": "POST",
+								"header": [
+									{"key": "Authorization", "value": "Bearer {{access_token}}"}
+								],
+								"url": {
+									"raw": "{{base_url}}/cart/user/clear/",
+									"host": ["{{base_url}}"],
+									"path": ["cart", "user", "clear", ""]
+								},
+								"description": "Removes all items from the authenticated user's cart."
+							},
+							"response": []
+						}
+					],
+					"description": "Operations for authenticated user carts."
+				},
+				{
+					"name": "Guest Cart",
+					"item": [
+						{
+							"name": "Get Guest Cart",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/cart/guest/?session_key=unique_guest_session_key_abc123",
+									"host": ["{{base_url}}"],
+									"path": ["cart", "guest", ""],
+									"query": [
+										{"key": "session_key", "value": "unique_guest_session_key_abc123", "description": "Unique session key for the guest."}
+									]
+								},
+								"description": "Retrieves the guest cart associated with a session key."
+							},
+							"response": []
+						},
+						{
+							"name": "Add Item to Guest Cart",
+							"request": {
+								"method": "POST",
+								"header": [
+									{"key": "Content-Type", "value": "application/json"}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"session_key\": \"unique_guest_session_key_abc123\",\n    \"product_id\": 102,\n    \"quantity\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/cart/guest/add/",
+									"host": ["{{base_url}}"],
+									"path": ["cart", "guest", "add", ""]
+								},
+								"description": "Adds a product to the guest cart or updates quantity."
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Item from Guest Cart",
+							"request": {
+								"method": "POST",
+								"header": [
+									{"key": "Content-Type", "value": "application/json"}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"session_key\": \"unique_guest_session_key_abc123\",\n    \"product_id\": 102\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/cart/guest/remove/",
+									"host": ["{{base_url}}"],
+									"path": ["cart", "guest", "remove", ""]
+								},
+								"description": "Removes a product from the guest cart."
+							},
+							"response": []
+						},
+						{
+							"name": "Update Item Quantity in Guest Cart",
+							"request": {
+								"method": "POST",
+								"header": [
+									{"key": "Content-Type", "value": "application/json"}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"session_key\": \"unique_guest_session_key_abc123\",\n    \"product_id\": 102,\n    \"quantity\": 2\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/cart/guest/update/",
+									"host": ["{{base_url}}"],
+									"path": ["cart", "guest", "update", ""]
+								},
+								"description": "Updates product quantity in the guest cart."
+							},
+							"response": []
+						},
+						{
+							"name": "Clear Guest Cart",
+							"request": {
+								"method": "POST",
+								"header": [
+									{"key": "Content-Type", "value": "application/json"}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"session_key\": \"unique_guest_session_key_abc123\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/cart/guest/clear/",
+									"host": ["{{base_url}}"],
+									"path": ["cart", "guest", "clear", ""]
+								},
+								"description": "Removes all items from the guest cart."
+							},
+							"response": []
+						}
+					],
+					"description": "Operations for guest (unauthenticated) user carts. Relies on a session_key managed by the frontend."
+				},
+				{
+					"name": "Merge Guest Cart to User Cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{access_token}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"session_key\": \"unique_guest_session_key_to_merge\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/cart/merge/",
+							"host": ["{{base_url}}"],
+							"path": ["cart", "merge", ""]
+						},
+						"description": "Merges items from a guest cart into the authenticated user's cart. Typically called after a guest logs in or registers."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing user shopping carts."
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Create Order (Checkout for Single Product)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "Authorization", "value": "Bearer {{access_token}}"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_id\": 101 \n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/orders/",
+							"host": ["{{base_url}}"],
+							"path": ["orders", "orders", ""],
+							"query": []
+						},
+						"description": "Creates an order for a specific product. This assumes a model where orders are per-product. Verify endpoint and request body with backend specifics for a full cart checkout."
+					},
+					"response": []
+				},
+				{
+					"name": "List User Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{access_token}}"}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders/orders/?page=1&page_size=10",
+							"host": ["{{base_url}}"],
+							"path": ["orders", "orders", ""],
+							"query": [
+								{"key": "page", "value": "1"},
+								{"key": "page_size", "value": "10"}
+							]
+						},
+						"description": "Retrieves a list of orders for the authenticated user (as a buyer)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{access_token}}"}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders/orders/:order_id/",
+							"host": ["{{base_url}}"],
+							"path": ["orders", "orders", ":order_id", ""],
+							"variable": [
+								{"key": "order_id", "value": "1", "description": "Order ID"}
+							]
+						},
+						"description": "Retrieves details of a specific order placed by the authenticated user."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for creating and managing user orders."
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://api.example.com/api",
+			"type": "string",
+			"description": "The base URL for the API. Update this to your actual API host."
+		},
+		{
+			"key": "access_token",
+			"value": "your_jwt_access_token",
+			"type": "string",
+			"description": "JWT Access token obtained after login. Update this with a valid token."
+		}
+	],
+	"event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ]
+} 

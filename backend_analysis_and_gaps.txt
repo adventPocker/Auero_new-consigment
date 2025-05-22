@@ -1,0 +1,136 @@
+## Backend Analysis and Gaps (Based on mobile-app-details.txt)
+
+This document outlines areas where the backend specification in `mobile-app-details.txt` may be lacking or requires further clarification. It is intended to serve as a reference for enhancing the backend to support the described mobile e-commerce application more comprehensively.
+
+### 1. Authentication and User Management
+
+1.  **Email/Phone Number Verification**:
+    *   **Gap**: No explicit API endpoints for sending verification codes to a user's email/phone upon registration or for verifying these codes. This is crucial for account validity.
+    *   **Suggestion**:
+        *   `POST /api/auth/send-verification` (Request: `{ contactType: "email" | "phone", contactValue: "user@example.com" }`)
+        *   `POST /api/auth/verify-contact` (Request: `{ contactType: "email" | "phone", contactValue: "user@example.com", code: "123456" }`)
+
+2.  **Password Change for Authenticated User**:
+    *   **Gap**: Missing API endpoint for an already logged-in user to change their password. The profile section only allows changing name, email, phone.
+    *   **Suggestion**: `PUT /api/users/me/password` (Request: `{ currentPassword, newPassword }`)
+
+3.  **Forgot Password Flow Clarification**:
+    *   **Gap**: The `POST /api/auth/reset-password` uses a `token`. It's unclear if this `token` is the verification code sent to the user or a separate token issued *after* code verification.
+    *   **Suggestion**: Clarify the flow. A common pattern is: 1. Request code, 2. Verify code (backend issues a short-lived reset token), 3. Reset password using the reset token.
+
+4.  **User Account Deletion**:
+    *   **Gap**: No API endpoint for users to request deletion of their own accounts.
+    *   **Suggestion**: `DELETE /api/users/me`
+
+### 2. Products, Categories, and Discovery
+
+5.  **Product Attributes Definition**:
+    *   **Gap**: The `Product` data model includes `attributes[]`, but its structure (e.g., key-value pairs like `[{ name: "Color", value: "Red" }]`) is undefined.
+    *   **Suggestion**: Define the schema for product attributes.
+
+6.  **Advanced Product Filtering and Sorting**:
+    *   **Gap**: While `GET /api/categories/{id}/products` mentions `filters`, their capabilities (e.g., by price range, specific attributes, brand) are not defined. The generic `GET /api/products` could also benefit from more robust filtering and sorting.
+    *   **Suggestion**: Specify available filter parameters (e.g., `price_min`, `price_max`, `attribute_Color=Red`, `brandId`) and sorting options (e.g., `sortBy=price_asc`, `sortBy=name_desc`).
+
+7.  **Brand Management**:
+    *   **Gap**: "Brand" is mentioned in product details UI, but it's unclear if it's just a string field within the `Product` model or a separate manageable entity (allowing for browsing/filtering by brand).
+    *   **Suggestion**: If brands are manageable entities:
+        *   Add `Brand` data model: `{ id, name, logoUrl, description }`
+        *   Add `brandId` to `Product` model.
+        *   Add API: `GET /api/brands` and `GET /api/brands/{id}/products`.
+
+### 3. Promotions and Marketing
+
+8.  **Promotional Banners/Deals**:
+    *   **Gap**: The Home screen specifies a "Banner slider for promotions," but there's no API endpoint to fetch these promotions or a corresponding `Promotion` data model.
+    *   **Suggestion**:
+        *   Add `Promotion` data model: `{ id, title, description, imageUrl, targetUrl, type (e.g., 'banner', 'deal'), startDate, endDate, placement (e.g., 'home_banner') }`
+        *   Add API: `GET /api/promotions` (e.g., with query params like `?placement=home_banner`)
+
+### 4. Enhanced User Features
+
+9.  **Product Reviews and Ratings**:
+    *   **Gap**: No functionality for users to submit, view, or manage product reviews and ratings. This is a standard e-commerce feature.
+    *   **Suggestion**:
+        *   Add `Review` data model: `{ id, userId, productId, rating (1-5), comment, createdAt, updatedAt }`
+        *   Add APIs:
+            *   `POST /api/products/{productId}/reviews`
+            *   `GET /api/products/{productId}/reviews` (with pagination)
+            *   `PUT /api/reviews/{reviewId}` (user edits own review)
+            *   `DELETE /api/reviews/{reviewId}` (user deletes own review)
+            *   `GET /api/users/me/reviews`
+
+10. **Wishlist/Favorites**:
+    *   **Gap**: No functionality for users to save products to a wishlist or favorites list.
+    *   **Suggestion**:
+        *   Add `WishlistItem` data model or similar: `{ userId, productId, createdAt }`
+        *   Add APIs:
+            *   `GET /api/users/me/wishlist`
+            *   `POST /api/users/me/wishlist` (Request: `{ productId }`)
+            *   `DELETE /api/users/me/wishlist/{productId}`
+
+### 5. Cart and Checkout Process
+
+11. **Discount Coupons/Vouchers**:
+    *   **Gap**: No mechanism described for applying discount codes or vouchers in the cart or at checkout.
+    *   **Suggestion**:
+        *   Add `Coupon` data model: `{ id, code, description, discountType ('percentage' | 'fixed'), value, minPurchaseAmount, startDate, endDate, usageLimitPerUser, totalUsageLimit }`
+        *   Add APIs:
+            *   `POST /api/cart/apply-coupon` (Request: `{ couponCode }`)
+            *   `DELETE /api/cart/remove-coupon`
+        *   `Cart` and `Order` models should reflect applied discounts and the final calculated price.
+
+12. **Shipping Options**:
+    *   **Gap**: The checkout process requires `shippingOption`, but there's no API endpoint to fetch available shipping methods, their costs, and estimated delivery times.
+    *   **Suggestion**:
+        *   Add `ShippingOption` data model: `{ id, name, description, cost, estimatedDeliveryTime }`
+        *   Add API: `GET /api/shipping-options` (Potentially with query params like `?addressId={addressId}&cartValue={value}` to get relevant options).
+
+13. **Tax Calculation and Display**:
+    *   **Gap**: The cart summary mentions "estimated tax," but the API specifications and `Order` data model lack detail on how tax is calculated, applied, and stored.
+    *   **Suggestion**:
+        *   Clarify if tax calculation is done by the backend.
+        *   The `POST /api/orders` response and `Order` model should include tax details (e.g., `taxRate`, `taxAmount`).
+        *   The `GET /api/cart` could also return estimated tax if possible.
+
+14. **Order Financials in Data Model**:
+    *   **Gap**: The `Order` data model (`id, userId, items[...], shippingAddressId, shippingOption, status, createdAt`) is missing crucial financial fields. While `GET /api/users/me/orders` response has a `total`, these should be part of the core `Order` model.
+    *   **Suggestion**: Add fields like `subtotal`, `shippingCost`, `discountAmount`, `taxAmount`, `grandTotal` to the `Order` model.
+
+### 6. Order Management
+
+15. **Detailed Order Statuses**:
+    *   **Gap**: The `Order` model has a `status` field. A clear enumeration of possible order statuses (e.g., Pending Payment, Awaiting Shipment, Shipped, Delivered, Cancelled, Refunded) should be defined.
+    *   **Suggestion**: Document the lifecycle and definitions of each order status.
+
+16. **Order Cancellation by User**:
+    *   **Gap**: No specified way for a user to cancel an order if it's within a permissible window (e.g., before processing/shipping).
+    *   **Suggestion**: `POST /api/orders/{orderId}/cancel` (user-initiated, with backend logic to check permissibility).
+
+### 7. Admin and Backend Operations
+
+17. **Admin Roles/Permissions Clarification**:
+    *   **Gap**: `PUT /api/orders/{orderId}/status` is marked "(Admin use)". The general mechanism for distinguishing admin users/actions (e.g., separate admin portal, role-based access control on the API with different tokens/claims) is not specified.
+    *   **Suggestion**: Briefly outline the expected admin access model or state if it's out of scope for this document but needs to be defined elsewhere.
+
+18. **Inventory Management Logic**:
+    *   **Gap**: `Product` model has `stockQty`. The logic for stock decrement (e.g., on cart addition vs. successful order placement), handling out-of-stock scenarios during checkout, and managing race conditions is a backend implementation detail but impacts user experience.
+    *   **Suggestion**: A brief note on the intended stock management strategy would be helpful (e.g., "stock is reserved upon order placement").
+
+### 8. API Design and General Considerations
+
+19. **API Versioning Strategy**:
+    *   **Gap**: No explicit API versioning strategy mentioned (e.g., `/api/v1/...`).
+    *   **Suggestion**: Recommend adopting a versioning strategy for future API evolution.
+
+20. **Localization Support**:
+    *   **Gap**: The "Settings" screen mentions "Language preferences." If the app is multilingual, backend APIs returning textual content (product names/descriptions, category names, error messages) should ideally support localization.
+    *   **Suggestion**: Consider how localization will be handled (e.g., via `Accept-Language` header, user profile setting reflected in API requests, or localized fields in data models). This has significant backend implications.
+
+21. **Rate Limiting and Security Hardening**:
+    *   **Gap**: Standard security considerations like rate limiting, input validation details, protection against common web vulnerabilities (OWASP Top 10) are not part of this app spec but are crucial for any backend.
+    *   **Suggestion**: Note that these will need to be addressed during backend development.
+
+---
+
+This list aims to be comprehensive for a typical e-commerce application based on the provided initial specification. Addressing these points will lead to a more robust and feature-complete backend. 

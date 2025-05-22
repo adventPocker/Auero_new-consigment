@@ -64,22 +64,42 @@ class CategoryDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class CategoryProducts(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request, pk):
         category = get_object_or_404(Category, pk=pk)
-        products = Product.objects.filter(category=category)
+        
+        if request.user.is_authenticated:
+            if request.user.is_staff:
+                products = Product.objects.filter(category=category)
+            else:
+                # Show vendor's own products or approved products
+                products = Product.objects.filter(
+                    Q(category=category) & 
+                    (Q(vendor=request.user) | Q(status='APPROVED'))
+                )
+        else:
+            # For anonymous users, show only approved products
+            products = Product.objects.filter(
+                category=category, 
+                status='APPROVED'
+            )
+            
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
 class ProductList(APIView):
-    permission_classes = [IsAuthenticated]
-
+    permission_classes = [AllowAny]
+  
     def get(self, request):
-        if request.user.is_staff:
-            products = Product.objects.all()
+        if request.user.is_authenticated:
+            if request.user.is_staff:
+                products = Product.objects.all()
+            else:
+                products = Product.objects.filter(vendor=request.user)
         else:
-            products = Product.objects.filter(vendor=request.user)
+            # For anonymous users, show only approved products
+            products = Product.objects.filter(status='APPROVED')
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
@@ -91,18 +111,27 @@ class ProductList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProductDetail(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
-    def get_object(self, pk, user):
+    def get_object(self, pk, user=None):
         product = get_object_or_404(Product, pk=pk)
-        if not user.is_staff and product.vendor != user:
-            raise PermissionError("Not authorized to access this product")
+        # For authenticated non-staff users, verify they're the vendor if product isn't approved
+        if user and user.is_authenticated and not user.is_staff:
+            if product.status != 'APPROVED' and product.vendor != user:
+                raise PermissionError("Not authorized to access this product")
+        # For anonymous users, only allow access to approved products
+        elif not user or not user.is_authenticated:
+            if product.status != 'APPROVED':
+                raise PermissionError("Not authorized to access this product")
         return product
 
     def get(self, request, pk):
-        product = self.get_object(pk, request.user)
-        serializer = ProductSerializer(product)
-        return Response(serializer.data)
+        try:
+            product = self.get_object(pk, request.user)
+            serializer = ProductSerializer(product)
+            return Response(serializer.data)
+        except PermissionError as e:
+            return Response({"error": str(e)}, status=status.HTTP_403_FORBIDDEN)
 
     def put(self, request, pk):
         product = self.get_object(pk, request.user)

@@ -6,7 +6,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
-        fields = ['address_line1', 'address_line2', 'city', 'state', 'postal_code', 'country']
+        fields = ['id', 'address_line1', 'address_line2', 'city', 'state', 'postal_code', 'country']
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """
@@ -59,11 +59,12 @@ class VendorSignupSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """
-    Serializer for returning user data in token responses
+    Serializer for returning and updating user data in token responses and profile update
     """
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'user_type']
+        fields = ['id', 'username', 'email', 'user_type', 'phone_number', 'profile_image']
+        read_only_fields = ['id', 'user_type']
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 

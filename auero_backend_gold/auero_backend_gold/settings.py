@@ -31,19 +31,41 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_ORIGINS = [
+CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Next.js default port
+    "http://localhost:3001",
     "http://localhost:5173", 
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
     'http://159.89.200.152',
-    'https://api1.aureosolutions.tech'
-    'http://139.59.42.184'
-    'https://apiv2.aureosolutions.tech'
-    'http://apiv2.aureosolutions.tech'
+    'https://api1.aureosolutions.tech',
+    'http://139.59.42.184',
+    'https://apiv2.aureosolutions.tech',
+    'http://apiv2.aureosolutions.tech',
+    'https://kzmr03olcc80zd9tul4f.lite.vusercontent.net'
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -54,7 +76,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://api1.aureosolutions.tech',
     'http://139.59.42.184',
     'https://apiv2.aureosolutions.tech',
-    'http://apiv2.aureosolutions.tech'
+    'http://apiv2.aureosolutions.tech',
+    'https://kzmr03olcc80zd9tul4f.lite.vusercontent.net'
 ]
 
 ALLOWED_HOSTS = [

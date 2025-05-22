@@ -1,0 +1,434 @@
+# API Documentation
+
+## Base URL
+`http://localhost:8000/api/`
+
+## Authentication Endpoints
+
+### 1. Customer Signup
+- **Endpoint**: `POST /auth/signup/customer/`
+- **Payload**:
+```json
+{
+    "username": "string",
+    "email": "string",
+    "password": "string",
+    "user_type": "customer"
+}
+```
+- **Response** (201 Created):
+```json
+{
+    "status": "success",
+    "message": "Customer registration successful",
+    "user": {
+        "id": "number",
+        "username": "string",
+        "email": "string",
+        "user_type": "customer",
+        "phone_number": "string",
+        "profile_image": "string"
+    },
+    "tokens": {
+        "refresh": "string",
+        "access": "string"
+    }
+}
+```
+
+### 2. Vendor Signup
+- **Endpoint**: `POST /auth/signup/vendor/`
+- **Payload**:
+```json
+{
+    "username": "string",
+    "email": "string",
+    "password": "string",
+    "phone_number": "string",
+    "vendor_profile": {
+        "vendor_type": "individual" | "company",
+        "company_name": "string",  // Required if vendor_type is "company"
+        "profile_image": "file",
+        "business_name": "string",
+        "business_website": "string",
+        "phone": "string",
+        "country": "string"
+    }
+}
+```
+- **Response** (201 Created):
+```json
+{
+    "status": "success",
+    "message": "Vendor registration successful",
+    "user": {
+        "id": "number",
+        "username": "string",
+        "email": "string",
+        "user_type": "vendor",
+        "phone_number": "string",
+        "profile_image": "string",
+        "vendor_profile": {
+            "vendor_type": "string",
+            "company_name": "string",
+            "approved": "boolean"
+        }
+    },
+    "tokens": {
+        "refresh": "string",
+        "access": "string"
+    }
+}
+```
+
+### 3. Login
+- **Endpoint**: `POST /auth/login/`
+- **Payload**:
+```json
+{
+    "email": "string",
+    "password": "string"
+}
+```
+- **Response** (200 OK):
+```json
+{
+    "user": {
+        "id": "number",
+        "username": "string",
+        "email": "string",
+        "user_type": "string",
+        "phone_number": "string",
+        "profile_image": "string"
+    },
+    "tokens": {
+        "access": "string",
+        "refresh": "string"
+    }
+}
+```
+
+### 4. Logout
+- **Endpoint**: `POST /auth/logout/`
+- **Headers**: `Authorization: Bearer <access_token>`
+- **Payload**:
+```json
+{
+    "refresh_token": "string"
+}
+```
+- **Response** (200 OK):
+```json
+{
+    "status": "success",
+    "message": "Successfully logged out"
+}
+```
+
+### 5. Get Current User
+- **Endpoint**: `GET /auth/me/`
+- **Headers**: `Authorization: Bearer <access_token>`
+- **Response** (200 OK):
+```json
+{
+    "status": "success",
+    "user": {
+        "id": "number",
+        "username": "string",
+        "email": "string",
+        "user_type": "string",
+        "phone_number": "string",
+        "profile_image": "string",
+        "vendor_profile": {
+            "vendor_type": "string",
+            "company_name": "string",
+            "contact_person": "string",
+            "approved": "boolean",
+            "profile_image": "string"
+        }
+    }
+}
+```
+
+## Product Endpoints
+
+### 1. List All Products
+- **Endpoint**: `GET /products/`
+- **Response** (200 OK):
+```json
+[
+    {
+        "id": "number",
+        "vendor": "number",
+        "vendor_name": "string",
+        "category": "number",
+        "category_name": "string",
+        "name": "string",
+        "name_ar": "string",
+        "slug": "string",
+        "description": "string",
+        "description_ar": "string",
+        "vendor_price": "number",
+        "selling_price": "number",
+        "platform_fee": "number",
+        "vendor_payout": "number",
+        "payout_status": "string",
+        "status": "string",
+        "inspection_notes": "string",
+        "created_at": "string",
+        "updated_at": "string",
+        "images": [
+            {
+                "id": "number",
+                "image": "string",
+                "is_primary": "boolean",
+                "created_at": "string"
+            }
+        ],
+        "consignment": {
+            "id": "number",
+            "handover_date": "string",
+            "inspection_date": "string",
+            "physical_status": "string",
+            "inspector": "number",
+            "inspector_name": "string",
+            "quality_notes": "string",
+            "authentication_notes": "string",
+            "created_at": "string",
+            "updated_at": "string"
+        }
+    }
+]
+```
+
+### 2. Search Products
+- **Endpoint**: `GET /products/search/`
+- **Query Parameters**:
+  - `q`: Search query (string)
+  - `category`: Category ID (number)
+  - `min_price`: Minimum price (number)
+  - `max_price`: Maximum price (number)
+  - `status`: Product status (string)
+  - `ordering`: Order by field (string)
+  - `page`: Page number (number)
+  - `page_size`: Items per page (number)
+- **Response** (200 OK):
+```json
+{
+    "count": "number",
+    "next": "string | null",
+    "previous": "string | null",
+    "results": [
+        // Array of products (same as List All Products)
+    ]
+}
+```
+
+### 3. Get Product Details
+- **Endpoint**: `GET /products/<id>/`
+- **Response** (200 OK):
+```json
+{
+    // Single product object (same as in List All Products)
+}
+```
+
+### 4. Get Product Images
+- **Endpoint**: `GET /products/<id>/images/`
+- **Response** (200 OK):
+```json
+[
+    {
+        "id": "number",
+        "image": "string",
+        "is_primary": "boolean",
+        "created_at": "string"
+    }
+]
+```
+
+## Category Endpoints
+
+### 1. List All Categories
+- **Endpoint**: `GET /categories/`
+- **Response** (200 OK):
+```json
+[
+    {
+        "id": "number",
+        "name": "string",
+        "name_ar": "string",
+        "description": "string",
+        "description_ar": "string",
+        "banner_image": "string",
+        "image": "string",
+        "is_active": "boolean",
+        "slug": "string",
+        "created_at": "string",
+        "updated_at": "string"
+    }
+]
+```
+
+### 2. Get Category Details
+- **Endpoint**: `GET /categories/<id>/`
+- **Response** (200 OK):
+```json
+{
+    // Single category object (same as in List All Categories)
+}
+```
+
+### 3. Get Category Products
+- **Endpoint**: `GET /categories/<id>/products/`
+- **Response** (200 OK):
+```json
+[
+    // Array of products (same as in List All Products)
+]
+```
+
+## Address Endpoints (Authenticated)
+
+### 1. List User Addresses
+- **Endpoint**: `GET /auth/addresses/`
+- **Headers**: `Authorization: Bearer <access_token>`
+- **Response** (200 OK):
+```json
+[
+    {
+        "id": "number",
+        "address_line1": "string",
+        "address_line2": "string",
+        "city": "string",
+        "state": "string",
+        "postal_code": "string",
+        "country": "string"
+    }
+]
+```
+
+### 2. Create Address
+- **Endpoint**: `POST /auth/addresses/`
+- **Headers**: `Authorization: Bearer <access_token>`
+- **Payload**:
+```json
+{
+    "address_line1": "string",
+    "address_line2": "string",
+    "city": "string",
+    "state": "string",
+    "postal_code": "string",
+    "country": "string"
+}
+```
+- **Response** (201 Created):
+```json
+{
+    // Created address object
+}
+```
+
+### 3. Update Address
+- **Endpoint**: `PUT /auth/addresses/<id>/`
+- **Headers**: `Authorization: Bearer <access_token>`
+- **Payload**: Same as Create Address
+- **Response** (200 OK):
+```json
+{
+    // Updated address object
+}
+```
+
+### 4. Delete Address
+- **Endpoint**: `DELETE /auth/addresses/<id>/`
+- **Headers**: `Authorization: Bearer <access_token>`
+- **Response** (204 No Content)
+
+## Password Management
+
+### 1. Change Password
+- **Endpoint**: `POST /auth/password/change/`
+- **Headers**: `Authorization: Bearer <access_token>`
+- **Payload**:
+```json
+{
+    "old_password": "string",
+    "new_password": "string"
+}
+```
+- **Response** (200 OK):
+```json
+{
+    "status": "success",
+    "message": "Password changed successfully."
+}
+```
+
+### 2. Request Password Reset
+- **Endpoint**: `POST /auth/password/reset/`
+- **Payload**:
+```json
+{
+    "email": "string"
+}
+```
+- **Response** (200 OK):
+```json
+{
+    "status": "success",
+    "uid": "string",
+    "token": "string",
+    "message": "Password reset link (mocked) generated."
+}
+```
+
+### 3. Confirm Password Reset
+- **Endpoint**: `POST /auth/password/reset/confirm/`
+- **Payload**:
+```json
+{
+    "uid": "string",
+    "token": "string",
+    "new_password": "string"
+}
+```
+- **Response** (200 OK):
+```json
+{
+    "status": "success",
+    "message": "Password has been reset successfully."
+}
+```
+
+## Important Notes
+
+1. **Authentication**:
+   - All authenticated endpoints require the `Authorization` header with the format: `Bearer <access_token>`
+   - Access tokens expire after a certain time
+   - Use the refresh token to get a new access token
+
+2. **File Uploads**:
+   - For file uploads (images), use `multipart/form-data` content type
+   - Maximum file size is determined by the server configuration
+
+3. **Error Responses**:
+   - 400 Bad Request: Invalid input data
+   - 401 Unauthorized: Missing or invalid authentication
+   - 403 Forbidden: Insufficient permissions
+   - 404 Not Found: Resource doesn't exist
+   - 500 Internal Server Error: Server-side error
+
+4. **Pagination**:
+   - List endpoints support pagination
+   - Use `page` and `page_size` query parameters
+   - Response includes `count`, `next`, and `previous` fields
+
+5. **Date Formats**:
+   - All dates are in ISO 8601 format
+   - Example: `"2024-03-20T10:30:00Z"`
+
+6. **Image URLs**:
+   - Image URLs are relative to the media root
+   - Prepend the base URL to get the full URL
+   - Example: `http://localhost:8000/media/profile_images/image.jpg` 
