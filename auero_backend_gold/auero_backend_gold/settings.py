@@ -44,7 +44,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://139.59.42.184',
     'https://apiv2.aureosolutions.tech',
     'http://apiv2.aureosolutions.tech',
-    'https://kzmr03olcc80zd9tul4f.lite.vusercontent.net'
+    'https://kzmr03olcc80zd9tul4f.lite.vusercontent.net',
+    'https://jewellory-frontend-awj.vercel.app/'
 ]
 
 CORS_ALLOW_METHODS = [
@@ -77,7 +78,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://139.59.42.184',
     'https://apiv2.aureosolutions.tech',
     'http://apiv2.aureosolutions.tech',
-    'https://kzmr03olcc80zd9tul4f.lite.vusercontent.net'
+    'https://kzmr03olcc80zd9tul4f.lite.vusercontent.net',
+    'https://jewellory-frontend-awj.vercel.app/'
 ]
 
 ALLOWED_HOSTS = [
@@ -86,6 +88,7 @@ ALLOWED_HOSTS = [
     'api1.aureosolutions.tech',
     '139.59.42.184',
     'apiv2.aureosolutions.tech',
+    'jewellory-frontend-awj.vercel.app'
     ]
 
 
